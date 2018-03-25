@@ -1,0 +1,27 @@
+FROM centos:latest
+
+RUN yum update -y
+RUN yum install -y \
+  curl \
+  java \
+  java-1.8.0-openjdk-devel \
+  git \
+  vim \
+  unzip
+
+COPY wildfly-11.0.0.Final.zip /opt
+WORKDIR /opt
+RUN unzip wildfly-11.0.0.Final.zip
+RUN ln -s wildfly-11.0.0.Final wildfly
+RUN cp /opt/wildfly/standalone/configuration/standalone.xml{,.bak}
+RUN sed -i 's!<inet-address value="${jboss.bind.address.management:127.0.0.1}"/>!<any-address/>!' /opt/wildfly/standalone/configuration/standalone.xml
+RUN sed -i 's!<inet-address value="${jboss.bind.address:127.0.0.1}"/>!<any-address/>!' /opt/wildfly/standalone/configuration/standalone.xml
+RUN sed -i 's/Xmx512m/Xmx128m/' /opt/wildfly/bin/standalone.conf
+
+COPY myapp.war /root
+COPY postgresql-42.1.1.jar /root
+COPY jboss-cli.txt /opt
+COPY script.sh /opt
+
+WORKDIR /opt/wildfly
+CMD /opt/script.sh

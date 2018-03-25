@@ -1,0 +1,12 @@
+connect
+deploy /root/postgresql-42.1.1.jar
+data-source add \
+  --name=PostgresDS \
+  --connection-url=jdbc:postgresql://URL \
+  --jndi-name=java:jboss/datasources/myappDS \
+  --driver-name=postgresql-42.1.1.jar \
+  --user-name=USER \
+  --password=PASSWORD \
+  --jta=true \
+  --enabled=true \
+  --use-ccm=true
